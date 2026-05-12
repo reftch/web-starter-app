@@ -16,11 +16,11 @@ int main() {
     server
         ->path("GET", "/",
                [](const std::string&, const auto&) {
-                   return http::response::create(http::response::content_type::HTML, read_file("./static/index.html"));
+                   return http::response::create(http::response::content_type::HTML, read_file("./assets/index.html"));
                })
         .path("GET", "/home",
               [](const std::string&, const auto&) {
-                  return http::response::create(http::response::content_type::HTML, read_file("./static/home.html"));
+                  return http::response::create(http::response::content_type::HTML, read_file("./assets/home.html"));
               })
         .path("GET", "/api/v1/time",
               [](const std::string&, const auto&) {

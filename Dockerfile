@@ -9,20 +9,17 @@ WORKDIR /app
 
 # Copy the source code into the container
 COPY . .
-RUN ./utilities/install.sh
 
 # Compile in release mode  
-RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=YES
 RUN cmake --build build
 
 # Stage 2: Runtime stage
 FROM scratch
-# FROM alpine:3 AS release-stage 
-# RUN apk add --no-cache gcompat
 
 # Copy the static binary from the build stage
-COPY --from=build /app/build/web-starter /web-starter
-COPY --from=build /app/build/static /static
+COPY --from=build /app/build/web-starter-app /web-starter-app
+COPY --from=build /app/build/assets /assets
 
 # Command to run the binary
-CMD ["/web-starter"]
+CMD ["/web-starter-app"]

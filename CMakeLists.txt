@@ -1,28 +1,32 @@
 cmake_minimum_required(VERSION 3.10)
 project(web-starter)
 
-# Set C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT APPLE)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 endif()
 
-# Find all source files in src directory
 file(GLOB SOURCES "src/*.cpp")
 
-# Add executable
-add_executable(web-starter ${SOURCES})
+# Avoid target name
+add_executable(web-starter-app ${SOURCES})
 
-# Find and link the local library
-add_library(http-server STATIC IMPORTED)
-set_target_properties(http-server PROPERTIES
-    IMPORTED_LOCATION /usr/local/lib/http-server/libhttp-server.a
-    INTERFACE_INCLUDE_DIRECTORIES /usr/local/include/http-server
+include(FetchContent)
+FetchContent_Declare(
+    http-server
+    GIT_REPOSITORY https://github.com/reftch/http-server-cpp.git
+    GIT_TAG        v1.0.0
 )
 
-# Link the library to your executable
-target_link_libraries(web-starter http-server)
+# Repo has a flag to disable examples & tests, set it:
+set(BUILD_EXAMPLES OFF CACHE INTERNAL "")
+set(BUILD_TEST OFF CACHE INTERNAL "")
 
-file(COPY static DESTINATION ${CMAKE_BINARY_DIR})
+FetchContent_MakeAvailable(http-server)
+
+target_link_libraries(web-starter-app http-server)
+
+# copy assests
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
