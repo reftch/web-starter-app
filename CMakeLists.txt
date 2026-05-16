@@ -8,7 +8,7 @@ if(NOT APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 endif()
 
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*.cc")
 
 add_executable(web-starter-app ${SOURCES})
 
@@ -16,7 +16,7 @@ include(FetchContent)
 FetchContent_Declare(
     http-server
     GIT_REPOSITORY https://github.com/reftch/http-server-cpp.git
-    GIT_TAG        v0.0.5
+    GIT_TAG        v0.1.0
 )
 
 # Repo has a flag to disable examples & tests, set it:
