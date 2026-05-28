@@ -16,7 +16,7 @@ include(FetchContent)
 FetchContent_Declare(
     http-server
     GIT_REPOSITORY https://github.com/reftch/http-server-cpp.git
-    GIT_TAG        v0.2.2
+    GIT_TAG        v0.2.3
 )
 
 # Repo has a flag to disable examples & tests, set it:
