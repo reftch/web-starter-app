@@ -21,11 +21,6 @@ int main() {
         res.SetContent<http::ContentType::HTML>("index.html");
     });
 
-    s.SetRoute<http::HttpMethod::GET>("/home", [](const http::Request& req, http::Response& res) {
-        log.Info("Request path: {}", req.path());
-        res.SetContent<http::ContentType::HTML>("home.html");
-    });
-
     s.SetRoute<http::HttpMethod::GET>("/api/v1/inc/:v", [](const http::Request& req, http::Response& res) {
         std::string value = req.params().at("v");
         res.SetContent<http::ContentType::JSON>("{\"value\":\"" + std::to_string(std::stoi(value) + 1) + "\"}");

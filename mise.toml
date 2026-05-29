@@ -1,0 +1,52 @@
+
+[tasks.dev]
+description = "Run application in dev mode"
+env = { "DEV_MODE" = "true", "SERVER_PORT" = "8080" }
+run = [
+    { tasks = ["app", "bun-dev"] }, 
+]
+
+# -----------------------------------------------------------------------------
+# API
+# -----------------------------------------------------------------------------
+
+[tasks.app]
+description = "Build and run application"
+depends = ["app-install"]
+quiet = true
+run = "cd ./build && make && ./web-starter-app"
+
+[tasks.app-install]
+description = "Build and run application"
+quiet = true
+run = "mkdir -p build && cd ./build && cmake .."
+
+# -----------------------------------------------------------------------------
+# Web
+# -----------------------------------------------------------------------------
+ 
+[tasks.bun-install]
+description = "Install bun dependencies"
+quiet = true
+run = "cd ./web && bun install"
+
+[tasks.bun-dev]
+description = "Run web in development mode"
+depends = ["bun-install"]
+quiet = true
+run = "cd ./web && bun dev"
+
+[tasks.bun-build]
+description = "Run web in development mode"
+depends = ["bun-install"]
+quiet = true
+run = "cd ./web && bun run build"
+
+# -----------------------------------------------------------------------------
+# Miscellaneous
+# -----------------------------------------------------------------------------
+
+[tasks.clean]
+description = "Cleanup"
+quiet = true
+run = "rm -rf ./build ./web/node_modules"
