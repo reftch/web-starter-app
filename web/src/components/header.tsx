@@ -1,6 +1,5 @@
 import { useEffect, useState } from "preact/compat";
 import { cn } from "../lib/utils";
-import json from './cities.json';
 import { Button } from "./ui/button";
 import { Field } from "./ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
@@ -26,10 +25,11 @@ type HeaderSearchProps = React.ComponentProps<"div"> & {
 type City = {
   id: number
   name: string
+  state: string
+  country: string
   latidude: number
   longtitude: number;
 }
-
 
 function HeaderSearch({ className, onSearch, ...props }: HeaderSearchProps) {
   const [value, setValue] = useState("")
@@ -47,9 +47,8 @@ function HeaderSearch({ className, onSearch, ...props }: HeaderSearchProps) {
         city.name.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredCities(filtered);
-      if (filtered.length > 0) {
+      if (filtered.length > 0 && filtered[0].name != value) {
         setIsSearchOpen(true);
-        // inputRef.current?.focus();
       }
     }
   }, [value, cities]);
@@ -67,33 +66,23 @@ function HeaderSearch({ className, onSearch, ...props }: HeaderSearchProps) {
     const input = e.currentTarget as HTMLInputElement;
     setValue(input.value)
 
-    const array: Array<City> = []
-    if (json.features.length > 0) {
-      json.features.forEach((c: any) => array.push({
-        id: c.properties.osm_id,
-        name: c.properties.name,
-        latidude: c.geometry.coordinates[1],
-        longtitude: c.geometry.coordinates[0],
-      }));
-      setCities(array);
-    }
+    fetch(`/api/v1/cities?keyword=${input.value}`)
+      .then((response) => response.json())
+      .then((json) => {
+        const array: Array<City> = []
+        if (json.features.length > 0) {
+          json.features.forEach((c: any) => array.push({
+            id: c.properties.osm_id,
+            name: c.properties.name,
+            state: c.properties.state,
+            country: c.properties.country,
+            latidude: c.geometry.coordinates[1],
+            longtitude: c.geometry.coordinates[0],
+          }));
 
-    // fetch(`/api/v1/cities?keyword=${input.value}`)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     const array: Array<City> = []
-    //     if (json.features.length > 0) {
-    //       json.features.forEach((c: any) => array.push({
-    //         id: c.properties.osm_id,
-    //         name: c.properties.name,
-    //         latidude: c.geometry.coordinates[1],
-    //         longtitude: c.geometry.coordinates[0],
-    //       }));
-
-    //       console.log(array)
-    //       setCities(array);
-    //     }
-    //   })
+          setCities(array);
+        }
+      })
 
   };
 
@@ -137,15 +126,19 @@ function HeaderSearch({ className, onSearch, ...props }: HeaderSearchProps) {
                 <div className="flex flex-col max-h-80 overflow-y-auto">
                   {filteredCities.length > 0 ? (
                     filteredCities.map((city: City) => (
-                      <Button
-                        variant="ghost"
+                      <div
+                        className="justify-start w-full p-1 hover:bg-muted cursor-pointer"
                         key={city.id}
                         tabIndex={-1}
                         onClick={() => handleCitySelect(city)}
-                        className="justify-start"
                       >
-                        {city.name}
-                      </Button>
+                        <div className="flex flex-col w-full">
+                          <div className="font-medium">{city.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {[city.state, city.country].filter(Boolean).join(', ')}
+                          </div>
+                        </div>
+                      </div>
                     ))
                   ) : (
                     <p className="p-2 text-gray-500">No cities found</p>
