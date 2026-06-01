@@ -4,7 +4,7 @@ import { Content } from "./components/content";
 import { Header, HeaderSearch, HeaderTitle } from "./components/header";
 import { Button } from "./components/ui/button";
 import type { City } from "./lib/model";
-import { getReverse } from "./lib/api";
+import { getCity } from "./lib/api";
 
 export function App() {
   const [city, setCity] = useState<City>();
@@ -20,7 +20,7 @@ export function App() {
           console.log("Latitude: " + position.coords.latitude);
           console.log("Longitude: " + position.coords.longitude);
           console.log("Accuracy: " + position.coords.accuracy + " meters");
-          const c = await getReverse({
+          const c = await getCity({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
           });

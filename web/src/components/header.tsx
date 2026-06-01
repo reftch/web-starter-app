@@ -5,7 +5,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import type { City } from "../lib/model";
 import { CoordinateValidator } from "../lib/validator";
-import { getReverse } from "../lib/api";
+import { getCities, getCity } from "../lib/api";
 
 function HeaderTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -70,35 +70,12 @@ function HeaderSearch({ className, onSearch, ...props }: HeaderSearchProps) {
     if (CoordinateValidator.validateStringCoordinates(value)) {
       const parsedCoord = CoordinateValidator.parseStringToCoordinate(value);
       if (parsedCoord) {
-        const c = await getReverse(parsedCoord);
+        const c = await getCity(parsedCoord);
         onSearch(c!);
       }
     } else if (value.length > 0) {
-      fetch(`/api/v1/cities?keyword=${input.value}`)
-        .then((response) => response.json())
-        .then((json) => {
-          const array: Array<City> = []
-          if (json.features.length > 0) {
-            json.features.forEach((c: any) => array.push({
-              id: c.properties.osm_id,
-              city: c.properties.name,
-              state: c.properties.state,
-              country: c.properties.country,
-              elevation: 0,
-              coordinate: {
-                latitude: c.geometry.coordinates[1],
-                longitude: c.geometry.coordinates[0],
-              },
-              current: {
-                temperature_2m: 0,
-                interval: 0,
-                time: '',
-              },
-            }));
-
-            setCities(array);
-          }
-        })
+      const array = await getCities(input.value);
+      setCities(array);
     }
   };
 
