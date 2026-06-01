@@ -3,7 +3,6 @@ import type { Coordinate } from "./model";
 export class CoordinateValidator {
     private static readonly LATITUDE_RANGE = [-90, 90];
     private static readonly LONGITUDE_RANGE = [-180, 180];
-    private static readonly MAX_PRECISION = 15;
 
     /**
      * Validates if coordinates are within valid Google Maps ranges

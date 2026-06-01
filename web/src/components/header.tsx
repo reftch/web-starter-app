@@ -5,6 +5,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import type { City } from "../lib/model";
 import { CoordinateValidator } from "../lib/validator";
+import { getReverse } from "../lib/api";
 
 function HeaderTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -39,8 +40,13 @@ function HeaderSearch({ className, onSearch, ...props }: HeaderSearchProps) {
       const filtered = cities.filter(city =>
         city.city.toLowerCase().includes(value.toLowerCase())
       );
-      setFilteredCities(filtered);
-      if (filtered.length > 0 && filtered[0].city != value) {
+
+      // Remove duplicates by ID
+      const uniqueCities = filtered.filter((city, index, self) =>
+        index === self.findIndex(c => c.id === city.id)
+      );
+      setFilteredCities(uniqueCities);
+      if (uniqueCities.length > 0 && uniqueCities[0].city != value) {
         setIsSearchOpen(true);
       }
     }
@@ -55,45 +61,17 @@ function HeaderSearch({ className, onSearch, ...props }: HeaderSearchProps) {
     }
   }, [isSearchOpen]);
 
-  const handleChange = (e: Event) => {
+  const handleChange = async (e: Event) => {
     const input = e.currentTarget as HTMLInputElement;
     const value = input.value;
-    setValue(value)
+    setValue(value);
 
     // check on physical coordinates
     if (CoordinateValidator.validateStringCoordinates(value)) {
       const parsedCoord = CoordinateValidator.parseStringToCoordinate(value);
       if (parsedCoord) {
-        fetch(`/api/v1/reverse?lat=${parsedCoord.latitude}&lon=${parsedCoord.longitude}`)
-          .then((response) => response.json())
-          .then((json) => {
-            const c = json.features[0];
-            const city: City = {
-              id: c.properties.osm_id,
-              key: c.properties.osm_key,
-              value: c.properties.osm_value,
-              postcode: c.properties.postcode,
-              housenumber: c.properties.housenumber,
-              street: c.properties.street,
-              type: c.properties.type,
-              district: c.properties.district,
-              city: c.properties.city,
-              state: c.properties.state,
-              country: c.properties.country,
-              countrycode: c.properties.countrycode,
-              elevation: 0,
-              coordinate: parsedCoord,
-              current: {
-                temperature_2m: 0,
-                interval: 0,
-                time: '',
-              },
-            };
-
-            console.log(json.features[0])
-
-            onSearch(city);
-          })
+        const c = await getReverse(parsedCoord);
+        onSearch(c!);
       }
     } else if (value.length > 0) {
       fetch(`/api/v1/cities?keyword=${input.value}`)
