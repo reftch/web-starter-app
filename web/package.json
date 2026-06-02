@@ -17,6 +17,7 @@
     "lucide-react": "^1.17.0",
     "preact": "^10.29.1",
     "radix-ui": "^1.4.3",
+    "recharts": "3.8.0",
     "shadcn": "^4.8.3",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.0",

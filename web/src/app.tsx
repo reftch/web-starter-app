@@ -47,7 +47,8 @@ export function App() {
           </Header>
 
           <Content>
-            {city ? <BasicCard city={city} /> : <SkeletonCard />}
+            {/* {city ? <BasicCard city={city} /> : <SkeletonCard />} */}
+            {city ? <BasicCard city={city} /> : null}
           </Content>
 
         </div>

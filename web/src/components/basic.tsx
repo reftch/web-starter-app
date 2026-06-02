@@ -16,7 +16,7 @@ function BasicCard({ city }: { city: City }) {
                 </div>
                 <div className="px-3">{new Date().toLocaleString('de')}</div>
             </CardHeader>
-            <CardContent className="items-center">
+            <CardContent className="flex items-center justify-between">
                 <div className="px-3 text-2xl pb-3">{city?.current.temperature_2m}°</div>
                 <Collapsible className="rounded-md data-[state=open]:bg-muted">
                     <CollapsibleTrigger asChild>
