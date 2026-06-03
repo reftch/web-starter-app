@@ -35,7 +35,7 @@ const ForecastPanel = ({ city }: { city: City }) => {
     return <div>No forecast data available</div>;
   }
 
-  console.log(city)
+  // console.log(city)
   return (
     <Card className="w-full">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b  sm:flex-row">
@@ -64,10 +64,6 @@ const ForecastPanel = ({ city }: { city: City }) => {
                   <span className="text-blue-400 text-lg">{Math.round(day.temperature_2m_max)}°</span>
                   <span className="text-gray-400">{Math.round(day.temperature_2m_min)}°</span>
                 </div>
-                {/* <div className="flex items-center space-x-2">
-                  <span className="font-medium">Wind:</span>
-                  <span className="text-gray-500 font-medium">{Math.round(day.wind_speed_10m_max)} m/s</span>
-                </div> */}
               </div>
             );
           })}
