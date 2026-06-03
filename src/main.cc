@@ -28,10 +28,11 @@ int main() {
         std::string longtitude = req.query().at("longtitude");
         log.Info("Request for meteo {}, {}", latidude, longtitude);
         auto client_res =
-            meteo.Get("/v1/forecast?latitude=" + latidude + "&longitude=" + longtitude + "&current=temperature_2m" +
-                      "&current=rain,cloud_cover,showers,snowfall,pressure_msl,surface_pressure,wind_speed_10m,wind_"
-                      "direction_10m,wind_gusts_10m,weather_code,precipitation,temperature_2m,relative_humidity_2m,"
-                      "apparent_temperature,is_day");
+            meteo.Get("/v1/forecast?latitude=" + latidude + "&longitude=" + longtitude + 
+                      "&current=temperature_2m&current=weather_code&current=wind_speed_10m&current=cloud_cover" +
+                      "&hourly=temperature_2m,precipitation_probability,wind_speed_10m,cloud_cover" +
+                      "&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,weather_code,precipitation_sum,wind_speed_10m_max" +
+                      "&forecast_days=7&timezone=auto");
         res.SetContent<http::ContentType::JSON>(client_res->content());
     });
 

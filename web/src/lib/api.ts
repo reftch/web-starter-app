@@ -67,6 +67,19 @@ export const getCities = async (keyword: string): Promise<Array<City>> => {
   return array;
 }
 
+// export const getMeteo = async (city: City): Promise<City> => {
+//   const response = await fetch(`/api/v1/temperature?latidude=${city.coordinate.latitude}&longtitude=${city.coordinate.longitude}`);
+//   if (!response.ok) {
+//     return city;
+//   }
+
+//   const json = await response.json();
+//   city.current = json.current;
+//   city.elevation = json.elevation;
+//   return city;
+// }
+
+// Add to web/src/lib/api.ts
 export const getMeteo = async (city: City): Promise<City> => {
   const response = await fetch(`/api/v1/temperature?latidude=${city.coordinate.latitude}&longtitude=${city.coordinate.longitude}`);
   if (!response.ok) {
@@ -76,5 +89,26 @@ export const getMeteo = async (city: City): Promise<City> => {
   const json = await response.json();
   city.current = json.current;
   city.elevation = json.elevation;
+
+  // Handle daily forecast data from the API
+  if (json.daily && json.daily.time && json.daily.temperature_2m_min &&
+    json.daily.temperature_2m_max && json.daily.weather_code) {
+    const daysCount = Math.min(json.daily.time.length, 7);
+    city.daily_forecast = [];
+
+    for (let i = 0; i < daysCount; i++) {
+      city.daily_forecast.push({
+        time: json.daily.time[i],
+        temperature_2m_max: json.daily.temperature_2m_max[i],
+        temperature_2m_min: json.daily.temperature_2m_min[i],
+        sunrise: json.daily.sunrise[i],
+        sunset: json.daily.sunset[i],
+        weather_code: json.daily.weather_code[i],
+        precipitation_sum: json.daily.precipitation_sum ? json.daily.precipitation_sum[i] : 0,
+        wind_speed_10m_max: json.daily.wind_speed_10m_max ? json.daily.wind_speed_10m_max[i] : 0
+      });
+    }
+  }
+
   return city;
 }

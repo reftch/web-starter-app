@@ -3,6 +3,17 @@ export type Coordinate = {
   longitude: number;
 };
 
+export type DailyForecast = {
+  time: string;
+  temperature_2m_max: number;
+  temperature_2m_min: number;
+  sunrise: string;
+  sunset: string;
+  weather_code: number;
+  precipitation_sum: number;
+  wind_speed_10m_max: number;
+};
+
 export type City = {
   id: number
   key?: string
@@ -23,4 +34,5 @@ export type City = {
     time: string
   }
   elevation: number
+  daily_forecast?: DailyForecast[]
 };

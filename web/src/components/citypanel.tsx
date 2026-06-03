@@ -65,6 +65,7 @@ const CityPanel = ({ city }: { city: City }) => {
           </div>
         )}
       </div>
+
     </div>
   );
 };

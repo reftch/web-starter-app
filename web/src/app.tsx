@@ -7,6 +7,7 @@ import { getCity, getMeteo } from "./lib/api";
 import { getGeolocation } from "./lib/utils";
 
 import type { City } from "./lib/model";
+import { ForecastPanel } from "./components/forecastpanel";
 
 export function App() {
   const [city, setCity] = useState<City>();
@@ -48,7 +49,11 @@ export function App() {
 
           <Content>
             {/* {city ? <BasicCard city={city} /> : <SkeletonCard />} */}
-            {city ? <BasicCard city={city} /> : null}
+            {/* {city ? <BasicCard city={city} /> : null} */}
+
+            {/* Add forecast panel */}
+            {city ? <ForecastPanel city={city} /> : null}
+
           </Content>
 
         </div>
