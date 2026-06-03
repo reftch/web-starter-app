@@ -19,7 +19,7 @@ run = "cd ./build && make && ./web-starter-app"
 
 [tasks.watch-app]
 description = "Watch and run application"
-run = "mise w -r -w src app"
+run = "mise w -c -r -w src app"
 
 [tasks.app-install]
 description = "Build and run application"

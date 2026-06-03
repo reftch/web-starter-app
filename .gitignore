@@ -69,3 +69,5 @@ Testing/
 .cache/
 
 node_modules
+
+AGENTS.md
