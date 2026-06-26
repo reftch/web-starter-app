@@ -1,7 +1,9 @@
 services:
-  web-starter-app:
+  web-starter:
+    image: web-starter:1.0.0
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
+    restart: unless-stopped
     ports:
       - 8080:8080

@@ -4,35 +4,51 @@ project(web-starter)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(NOT APPLE)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
-endif()
-
 file(GLOB SOURCES "src/*.cc")
 
+add_executable(web-starter ${SOURCES})
 
-find_package(OpenSSL REQUIRED)
-add_executable(web-starter-app ${SOURCES})
+# -----------------------------
+# OPTIONS (disable extras early)
+# -----------------------------
+option(BUILD_EXAMPLES OFF)
+option(BUILD_TESTS OFF)
 
+# -----------------------------
+# Fetch dependency
+# -----------------------------
 include(FetchContent)
-FetchContent_Declare(
-    http-server
-    GIT_REPOSITORY https://github.com/reftch/http-server-cpp.git
-    GIT_TAG        v0.2.0
-)
 
-# Repo has a flag to disable examples & tests, set it:
 set(BUILD_EXAMPLES OFF CACHE INTERNAL "")
 set(BUILD_TEST OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(http-server)
-
-target_link_libraries(web-starter-app 
-PRIVATE
+FetchContent_Declare(
     http-server
-    OpenSSL::SSL
-    OpenSSL::Crypto
+    GIT_REPOSITORY https://github.com/reftch/http-server-cpp.git
+    GIT_TAG        v0.2.32
 )
 
-# copy assests
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+FetchContent_MakeAvailable(http-server)
+
+target_link_libraries(web-starter PRIVATE http-server)
+
+# -----------------------------
+# 🔥 SIZE OPTIMIZATION (IMPORTANT)
+# -----------------------------
+target_compile_options(web-starter PRIVATE
+    -Os
+    -ffunction-sections
+    -fdata-sections
+    -fno-exceptions
+    -fno-rtti
+)
+
+target_link_options(web-starter PRIVATE
+    -W
+    -s
+)
+
+# -----------------------------
+# 🔥 LTO (huge win)
+# -----------------------------
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)

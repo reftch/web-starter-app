@@ -1,25 +1,54 @@
 # Stage 1: Build stage
-FROM ubuntu:latest AS build
+FROM alpine:3.20 AS build
 
-# Install build-essential for compiling C++ code
-RUN apt-get update && apt-get install -y build-essential cmake git
+RUN apk add --no-cache \
+    build-base \
+    cmake \
+    musl-dev \
+    git
 
-# Set the working directory
 WORKDIR /app
 
 # Copy the source code into the container
-COPY . .
+COPY src ./src
+COPY CMakeLists.txt ./CMakeLists.txt
 
 # Compile in release mode  
-RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=YES
-RUN cmake --build build
+RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_EXE_LINKER_FLAGS="-static"
 
-# Stage 2: Runtime stage
+RUN cmake --build build -j$(nproc) 
+
+# Production 
 FROM scratch
 
-# Copy the static binary from the build stage
-COPY --from=build /app/build/web-starter-app /web-starter-app
-COPY --from=build /app/build/assets /assets
+COPY --from=build /app/build/web-starter /web-starter
 
-# Command to run the binary
-CMD ["/web-starter-app"]
+CMD [ "/web-starter" ]
+
+
+# Stage 1: Build stage
+# FROM gcc:13 AS builder
+
+# RUN apt-get update && apt-get install -y \
+#     cmake \
+#     musl-dev \
+#     musl-tools
+
+# WORKDIR /app
+
+# # Copy source files
+# COPY src ./src
+# COPY CMakeLists.txt ./
+
+# # Simple build with static linking
+# RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+#     -DCMAKE_EXE_LINKER_FLAGS="-static" && \
+#     cmake --build build -j$(nproc) && \
+#     cp /app/build/web-starter /web-starter
+
+# # Stage 2: Runtime stage
+# FROM scratch
+# COPY --from=builder /web-starter /web-starter
+
+# ENTRYPOINT ["/web-starter"]
