@@ -44,7 +44,7 @@ target_compile_options(web-starter PRIVATE
 )
 
 target_link_options(web-starter PRIVATE
-    -W
+    -Wl,--gc-sections
     -s
 )
 
