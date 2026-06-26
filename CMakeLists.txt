@@ -33,7 +33,7 @@ FetchContent_MakeAvailable(http-server)
 target_link_libraries(web-starter PRIVATE http-server)
 
 # -----------------------------
-# 🔥 SIZE OPTIMIZATION (IMPORTANT)
+# SIZE OPTIMIZATION
 # -----------------------------
 target_compile_options(web-starter PRIVATE
     -Os
@@ -45,15 +45,15 @@ target_compile_options(web-starter PRIVATE
 
 if(NOT APPLE)
 target_link_options(web-starter PRIVATE
-    -Wl,--gc-sections
+    -Wl,--gc-sections,-s
 )
 else()
 target_link_options(web-starter PRIVATE
-    -Wl,-dead_strip
+    -Wl,-dead_strip,-s
 )
 endif()
 
 # -----------------------------
-# 🔥 LTO (huge win)
+# LTO 
 # -----------------------------
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
