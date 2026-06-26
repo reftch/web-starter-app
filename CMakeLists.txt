@@ -43,10 +43,15 @@ target_compile_options(web-starter PRIVATE
     -fno-rtti
 )
 
+if(NOT APPLE)
 target_link_options(web-starter PRIVATE
     -Wl,--gc-sections
-    -s
 )
+else()
+target_link_options(web-starter PRIVATE
+    -Wl,-dead_strip
+)
+endif()
 
 # -----------------------------
 # 🔥 LTO (huge win)

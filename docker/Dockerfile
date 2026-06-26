@@ -25,30 +25,3 @@ FROM scratch
 COPY --from=build /app/build/web-starter /web-starter
 
 CMD [ "/web-starter" ]
-
-
-# Stage 1: Build stage
-# FROM gcc:13 AS builder
-
-# RUN apt-get update && apt-get install -y \
-#     cmake \
-#     musl-dev \
-#     musl-tools
-
-# WORKDIR /app
-
-# # Copy source files
-# COPY src ./src
-# COPY CMakeLists.txt ./
-
-# # Simple build with static linking
-# RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
-#     -DCMAKE_EXE_LINKER_FLAGS="-static" && \
-#     cmake --build build -j$(nproc) && \
-#     cp /app/build/web-starter /web-starter
-
-# # Stage 2: Runtime stage
-# FROM scratch
-# COPY --from=builder /web-starter /web-starter
-
-# ENTRYPOINT ["/web-starter"]
